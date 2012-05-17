@@ -43,7 +43,7 @@ Template.editor.events = {
     e.preventDefault();
   },
   'click .card': function (e) {
-    var cardName = $(e.target).attr('title');
+    var cardName = $(e.target).attr('alt');
     if (cardName && cardName.length > 0) {
       var me = currentPlayer();
       if (me) {
