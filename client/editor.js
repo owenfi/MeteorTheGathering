@@ -23,11 +23,21 @@ Template.editor.events = {
     e.preventDefault();
   },
   'submit #add-card-form': function (e) {
-    var cardName = $.trim($('#new-card').val());
-    if (cardName.length > 0) {
-      var me = currentPlayer();
+    var cardNameStr = $.trim($('#new-card').val());
+    var me;
+    var cardNames;
+    
+    if (cardNameStr.length > 0) {
+      me = currentPlayer();
       if (me) {
-        Decks.update(me.deck_id, {$push: {card_names: cardName}});
+        cardNames = [];
+        $.each(cardNameStr.split(';'), function (key, cardName) {
+          cardName = $.trim(cardName);
+          if (cardName.length > 0) {
+            cardNames.push(cardName);
+          }
+        });
+        Decks.update(me.deck_id, {$pushAll: {card_names: cardNames}});
       }
     }
     e.preventDefault();
