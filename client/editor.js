@@ -23,7 +23,8 @@ Template.editor.events = {
     e.preventDefault();
   },
   'submit #add-card-form': function (e) {
-    var cardNameStr = $.trim($('#new-card').val());
+    var $input = $('#new-card');
+    var cardNameStr = $.trim($input.val());
     var me;
     var cardNames;
     
@@ -38,6 +39,7 @@ Template.editor.events = {
           }
         });
         Decks.update(me.deck_id, {$pushAll: {card_names: cardNames}});
+        $input.select();
       }
     }
     e.preventDefault();
