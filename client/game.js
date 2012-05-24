@@ -209,8 +209,7 @@ Template.game.events = {
     }
   },
   'mouseover .card-container, touchstart .card-container': function (e) {
-    var $target = $(e.target);
-    var $cardContainer = $target.hasClass('card-container') ? $target : $target.parents('.card-container');
+    var $cardContainer = $(e.currentTarget);
     
     if (!$cardContainer.data('isDraggable')) {
       $cardContainer.data('isDraggable', true).draggable({distance: 3});
@@ -285,11 +284,11 @@ Template.game.events = {
   }
 };
 
-(function () {
+$(function () {
   var prevDraggedId = '';
   var prevDraggedTime = 0;
-  
-  Template.game.events['drag .card-container'] = function (e) {
+
+  $('body').on('drag', '.card-container', function (e) {
     var now = new Date().getTime();
     var cardId;
     
@@ -306,16 +305,16 @@ Template.game.events = {
       dragged(cardId, $(e.target).position());
       prevDraggedTime = now;
     }
-  };
+  });
   
-  Template.game.events['dragstop .card-container'] = function (e) {
+  $('body').on('dragstop', '.card-container', function (e) {
     var cardId = e.target.id.substring(15);
     elevate(cardId);
     dragged(cardId, $(e.target).position());
     prevDraggedId = '';
-  };
+  });
   
-  Template.game.events['mouseup #mat .card'] = function (e) {
+  $('body').on('mouseup', '#mat .card', function (e) {
     var cardId;
     
     if (prevDraggedId != '') {
@@ -325,7 +324,7 @@ Template.game.events = {
     cardId = e.target.id.substring(5);
     elevate(cardId);
     Session.set('menu', cardId);
-  };
+  });
   
   function dragged (cardId, position) {
     Cards.update(cardId, {$set: {top: position.top, left: position.left}});
@@ -336,4 +335,4 @@ Template.game.events = {
     maxZIndex = incrementCurrentMaxZIndex();
     Cards.update(cardId, {$set: {z_index: maxZIndex}});
   }
-})();
+});
