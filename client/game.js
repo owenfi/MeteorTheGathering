@@ -1,3 +1,5 @@
+var TOKEN_NAME = '[Token]';
+
 Template.game.show = function () {
   return Session.equals('mode', 'game');
 }
@@ -67,9 +69,11 @@ Template.game.opponentHand = function () {
 Template.game.cardsOnMat = function () {
   return Cards.find({game_id: currentGameId(), $or: [{state: 'untapped'}, {state: 'tapped'}]})
     .map(function (card) {
+      card.isToken = (card.name == TOKEN_NAME);
+      
       if (Session.equals('menu', card._id)) {
         card.menuItems = [card.state == 'untapped' ? {action: 'tap', text: 'tap'} : {action: 'untap', text: 'untap'}];
-        if (isCurrentPlayerId(card.player_id)) {
+        if (isCurrentPlayerId(card.player_id) && !card.isToken) {
           card.menuItems.push(
             {action: 'unsummon', text: 'return to hand'},
             {action: 'libraryTop', text: 'put on top of library'},
@@ -78,6 +82,7 @@ Template.game.cardsOnMat = function () {
         card.menuTop = card.state == 'tapped' ? card.top + 28 : card.top;
         card.menuLeft = card.state == 'tapped' ? card.left -28 : card.left;
       }
+      
       return card;
     });
 };
@@ -245,13 +250,16 @@ Template.game.events = {
   'click #shuffle': function () {
     Cards.update({$or: [{state: 'libraryTop'}, {state: 'libraryBottom'}]}, {$set: {state: 'library'}}, {multi: true});
   },
+  'click #token': function () {
+    var position = getNewCardPosition();
+    var maxZIndex = incrementCurrentMaxZIndex();
+    Cards.insert({name: TOKEN_NAME, player_id: currentPlayerId(), game_id: currentGameId(), state: 'untapped', top: position.top, left: position.left, z_index: maxZIndex });
+  },
   'click #my-hand .card': function (e) {
     var cardId = e.target.id.substring(5);
-    var $mat = $('#mat');
-    var top = $mat.height() / 2 - 100 + Math.floor(Math.random() * 31) - 15;
-    var left = $mat.width() / 2 - 72 + Math.floor(Math.random() * 31) - 15;
+    var position = getNewCardPosition();
     var maxZIndex = incrementCurrentMaxZIndex();
-    Cards.update(cardId, {$set: {state: 'untapped', top: top, left: left, z_index: maxZIndex}});
+    Cards.update(cardId, {$set: {state: 'untapped', top: position.top, left: position.left, z_index: maxZIndex}});
   },
   'mousedown': function (e) {
     var menuCardId = Session.get('menu');
@@ -283,6 +291,13 @@ Template.game.events = {
     Session.set('menu', '');
   }
 };
+
+function getNewCardPosition() {
+  var $mat = $('#mat');
+  var top = $mat.height() / 2 - 100 + Math.floor(Math.random() * 31) - 15;
+  var left = $mat.width() / 2 - 72 + Math.floor(Math.random() * 31) - 15;
+  return { top: top, left: left };
+}
 
 $(function () {
   var prevDraggedId = '';

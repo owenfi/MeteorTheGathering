@@ -37,7 +37,7 @@
       <div id="mat-contents">
         {{#each cardsOnMat}}
           <div id="card-container-{{_id}}" class="card-container" style="top: {{top}}px; left: {{left}}px; z-index: {{z_index}};">
-            <img src="http://gatherer.wizards.com/Handlers/Image.ashx?name={{name}}&type=card" class="card {{state}}" title="{{name}}" id="card-{{_id}}" />
+            <img src="{{#if isToken}}back.jpg{{else}}http://gatherer.wizards.com/Handlers/Image.ashx?name={{name}}&type=card{{/if}}" class="card {{state}}" title="{{name}}" id="card-{{_id}}" />
           </div>
           {{#if menuItems}}
             <div id="menu" style="top: {{menuTop}}px; left: {{menuLeft}}px;">
@@ -76,7 +76,8 @@
           <input id="draw" type="button" value="Draw" /><br />
           <br />
           <input id="search" type="button" value="Search" /><br />
-          <input id="shuffle" type="button" value="Shuffle" />
+          <input id="shuffle" type="button" value="Shuffle" /><br />
+          <input id="token" type="button" value="Token" />
         </div>
         {{#each myHand}}
           <img src="http://gatherer.wizards.com/Handlers/Image.ashx?name={{name}}&type=card" class="card" title="{{name}}" id="card-{{_id}}" />
