@@ -12,6 +12,42 @@ function createNewDeck(name) {
 }
 
 if (Meteor.is_server) {
+  Games.allow({
+    'insert': function (userId, doc) {
+      return true;
+    },
+    'update': function (userId, docs, fields, modifier) {
+      return true;
+    }
+  });
+
+  Players.allow({
+    'insert': function (userId, doc) {
+      return true;
+    },
+    'update': function (userId, docs, fields, modifier) {
+      return true;
+    }
+  });
+
+  Decks.allow({
+    'insert': function (userId, doc) {
+      return true;
+    },
+    'update': function (userId, docs, fields, modifier) {
+      return true;
+    }
+  });
+
+  Cards.allow({
+    'insert': function (userId, doc) {
+      return true;
+    },
+    'update': function (userId, docs, fields, modifier) {
+      return true;
+    }
+  });
+
   Meteor.publish('games', function () {
     return Games.find({});
   });  

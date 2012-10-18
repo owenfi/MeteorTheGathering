@@ -303,13 +303,20 @@ $(function () {
   var prevDraggedId = '';
   var prevDraggedTime = 0;
 
+  // jQuery UI drag'n'drop doesn't work well with the current version of Meteor,
+  // since when the card is re-rendered mid-drag, it is "dropped" and no longer being dragged.
+  // As a workaround, `elevate` and `dragged` are commented out below.
+  // Consequently, when player 1 drags a card, player 2 doesn't see the card move
+  // until player 1 drops the card.
+  // TODO: Figure out a way to restore the original behavior.
+
   $('body').on('drag', '.card-container', function (e) {
     var now = new Date().getTime();
     var cardId;
-    
+
     if (e.target.id != prevDraggedId) {
       cardId = e.target.id.substring(15);
-      elevate(cardId);
+      //elevate(cardId);
       prevDraggedId = e.target.id;
     }
     
@@ -317,7 +324,7 @@ $(function () {
       if (!cardId) {
         cardId = e.target.id.substring(15);
       }
-      dragged(cardId, $(e.target).position());
+      //dragged(cardId, $(e.target).position());
       prevDraggedTime = now;
     }
   });
