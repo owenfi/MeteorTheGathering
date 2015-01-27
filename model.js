@@ -11,6 +11,16 @@ function createNewDeck(name) {
   return Decks.insert({name: name, card_names: []});
 }
 
+Meteor.methods({
+  
+  createGame: function() {
+    var gameId = createNewGame('');
+    var deckId = createNewDeck('');
+
+    return [gameId, deckId];
+  }
+});
+
 if (Meteor.is_server) {
   Games.allow({
     'insert': function (userId, doc) {
