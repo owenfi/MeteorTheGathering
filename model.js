@@ -3,11 +3,11 @@ Players = new Meteor.Collection('players');
 Decks = new Meteor.Collection('decks');
 Cards = new Meteor.Collection('cards');
 
-function createNewGame(name) {
+createNewGame = function(name) {
   return Games.insert({name: name, max_z_index: 0});
 }
 
-function createNewDeck(name) {
+createNewDeck = function (name) {
   return Decks.insert({name: name, card_names: []});
 }
 
@@ -18,6 +18,42 @@ Meteor.methods({
     var deckId = createNewDeck('');
 
     return [gameId, deckId];
+  }
+});
+
+Games.allow({
+  'insert': function (userId, doc) {
+    return true;
+  },
+  'update': function (userId, docs, fields, modifier) {
+    return true;
+  }
+});
+
+Players.allow({
+  'insert': function (userId, doc) {
+    return true;
+  },
+  'update': function (userId, docs, fields, modifier) {
+    return true;
+  }
+});
+
+Decks.allow({
+  'insert': function (userId, doc) {
+    return true;
+  },
+  'update': function (userId, docs, fields, modifier) {
+    return true;
+  }
+});
+
+Cards.allow({
+  'insert': function (userId, doc) {
+    return true;
+  },
+  'update': function (userId, docs, fields, modifier) {
+    return true;
   }
 });
 
