@@ -1,3 +1,7 @@
+
+
+//<script language="JavaScript" type="text/javascript" src="/model.js"></script>
+
 var currentPlayerId = function () {
   return Session.get('player_id');
 };
@@ -39,23 +43,34 @@ var incrementCurrentMaxZIndex = function () {
 };
 
 Meteor.startup(function () {
-  var gameId = createNewGame('');
-  var deckId = createNewDeck('');
-  var playerId = Players.insert({name: '', game_id: gameId, deck_id: deckId});
 
-  Games.update(gameId, {$set: {name: 'game-' + gameId}});
-  Decks.update(deckId, {$set: {name: 'deck-' + deckId}});
-  Players.update(playerId, {$set: {name: 'user-' + playerId}});
+    Meteor.call('createGame', function (error, result) { 
+        console.log("result");
+        console.log(result);
 
-  Session.set('game_id', gameId);  
-  Session.set('player_id', playerId);
-  Session.set('mode', 'game');
-  
-  Meteor.subscribe('games');
-  Meteor.subscribe('players');
-  Meteor.subscribe('decks');
+        var gameId = result[0];
+        var deckId = result[0];
 
-  Meteor.autosubscribe(function () {
-    Meteor.subscribe('cards', Session.get('game_id'));
+        var playerId = Players.insert({name: '', game_id: gameId, deck_id: deckId});
+
+        Games.update(gameId, {$set: {name: 'game-' + gameId}});
+        Decks.update(deckId, {$set: {name: 'deck-' + deckId}});
+        Players.update(playerId, {$set: {name: 'user-' + playerId}});
+
+        Session.set('game_id', gameId);  
+        Session.set('player_id', playerId);
+        Session.set('mode', 'game');
+        
+        Meteor.subscribe('games');
+        Meteor.subscribe('players');
+        Meteor.subscribe('decks');
+
+        Meteor.autosubscribe(function () {
+          Meteor.subscribe('cards', Session.get('game_id'));
+        });
+    });
+
+    console.log("2");
+  //var gameId = createNewGame('');
+  //var deckId = createNewDeck('');
   });
-});
